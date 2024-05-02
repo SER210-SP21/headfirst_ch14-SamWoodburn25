@@ -1,18 +1,21 @@
 package edu.quinnipiac.ser210.tasks
 
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class TasksViewModel(val dao: TaskDAO) : ViewModel() {
     var newTaskName = ""
 
-    val tasks = dao.getAll()
+    val tasks: LiveData<List<Task>> = dao.getAll()
 
-    val tasksString = Transformations.map(tasks) {
-        tasks -> formatTasks(tasks)
+    val tasksString = tasks.map { tasks ->
+        formatTasks(tasks)
     }
+
 
     fun addTask() {
         viewModelScope.launch {
